@@ -2,12 +2,10 @@ import { useFonts } from "expo-font";
 import { createContext, useContext } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 
-
-
 const FontContext = createContext({});
 
-export function FontProvider({ Children }) {
-    const[loaded, error] = useFonts({
+export function FontProvider({ children }) {
+    const [loaded, error] = useFonts({
         regular: require('../../assets/fonts/Montserrat-Regular.ttf'),
         bold: require("../../assets/fonts/Montserrat-Bold.ttf"),
         black: require("../../assets/fonts/Montserrat-Black.ttf"),
@@ -15,24 +13,26 @@ export function FontProvider({ Children }) {
         light: require("../../assets/fonts/Montserrat-Light.ttf"),  
     });
 
-    if (!loaded && !error) {
-        return
-         <View style= {{ flex: 1, justifyContent: "center", alignItems: "center"}}>
-          <Text style={{ fontSize: 28, marginTop: 15}}>
-            AFF QUE DIFICIL
-          </Text>
-          <ActivityIndicator size="large" color="#0000ff" />
-         </View>;
-
+    if (!loaded) {
+        return (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <Text style={{ fontSize: 28, marginTop: 15 }}>
+                    AFF QUE DIFICIL
+                </Text>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
     }
-    return <FontContext.Provider value={{loaded}}>{Children}</FontContext.Provider>;
+
+    return <FontContext.Provider value={{ loaded }}>{children}</FontContext.Provider>;
 }
 
 export function useFont() {
-    const Context = useContext(FontContext);
+    const fontContext = useContext(FontContext);
 
-    if(!Context) {
-        throw new Error("useFont must be use whithin a FontProvider");
+    if (!fontContext) {
+        throw new Error("useFont must be used within a FontProvider");
     }
-    return Context;
+
+    return fontContext;
 }
